@@ -2,14 +2,31 @@ import React, { useRef, useState } from 'react';
 import './App.css';
 import List from './List.js';
 
-const user = {
-  name: 'Hedy Lamarr',
-  imageUrl: 'https://i.imgur.com/yXOvdOSs.jpg',
+const defaultUser = {
   imageSize: 90,
   borderRadius: '20px'
 };
 
+const genderedImages = {
+  male: 'https://i.pravatar.cc/150?img=3',
+  female: 'https://i.pravatar.cc/150?img=5',
+  unknown: 'https://i.pravatar.cc/150?img=12'
+};
+
+const nameToGender = {
+  Sara: 'female',
+  Arun: 'male',
+  Ratheesh: 'male',
+  Sunil: 'male',
+  Kumar: 'male'
+};
+
 const arr = ['Sara 0', 'Arun 1', 'Ratheesh 2', 'Sunil 3', 'Kumar 4'];
+
+function getImageForName(name) {
+  const gender = nameToGender[name] || 'unknown';
+  return genderedImages[gender] || genderedImages.unknown;
+}
 
 function TodoFetcher() {
   const [todo, setTodo] = useState(null);
@@ -28,6 +45,9 @@ function TodoFetcher() {
     setStatus('loading');
     setError(null);
     setTodo(null);
+
+    // Add an artificial delay so cancel/abort can be tested more easily.
+    await new Promise((resolve) => setTimeout(resolve, 4000));
 
     try {
       const response = await fetch('https://jsonplaceholder.typicode.com/todos/1', {
@@ -120,22 +140,27 @@ export default function Profile() {
   return (
     <div className="App">
         <TodoFetcher className="item" />
-      {arr.map((Item, index) => (
-        <div key={index} className="item">
-          <List />
-          <h1>{Item.split(' ')[0]}</h1>
-          <img
-            className="avatar"
-            src={user.imageUrl}
-            alt={'Photo of ' + user.name}
-            style={{
-              width: user.imageSize,
-              height: user.imageSize,
-              borderRadius: user.borderRadius
-            }}
-          />
-        </div>
-      ))}
+      {arr.map((Item, index) => {
+        const name = Item.split(' ')[0];
+        const imageUrl = getImageForName(name);
+
+        return (
+          <div key={index} className="item">
+            <List />
+            <h1>{name}</h1>
+            <img
+              className="avatar"
+              src={imageUrl}
+              alt={'Photo of ' + name}
+              style={{
+                width: defaultUser.imageSize,
+                height: defaultUser.imageSize,
+                borderRadius: defaultUser.borderRadius
+              }}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }
