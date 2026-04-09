@@ -11,7 +11,7 @@ const defaultUser = {
 
 const obj = [
   {
-    Name : "Sara",
+    Name : "Suja",
     Image : "https://i.pravatar.cc/150?img=1",
     title: "Appointment for October",
     descr: "The patient is rescheduled to October",
@@ -25,7 +25,7 @@ const obj = [
     isActive: true  
   },
   {
-    Name : "Ratheesh",
+    Name : "Janvi",
     Image : "https://i.pravatar.cc/150?img=3",
     title: "Appointment for December",
     descr: "Chrinic allergetic Problemr",
