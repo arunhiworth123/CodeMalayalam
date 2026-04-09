@@ -1,11 +1,74 @@
 .App {
   text-align: left;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  min-height: 100vh;
+  background: #f5f6fb;
+}
+
+.app-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #0b5ed7;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  font-weight: 600;
+}
+
+.app-header .header-title {
+  font-size: 1.6rem;
+  letter-spacing: 0.05em;
+}
+
+.app-header span {
+  margin-left: 1rem;
+  cursor: pointer;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.app-header span:hover {
+  color: #ffe94a;
+}
+
+.app-body {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(220px, 1fr));
+  gap: 1rem;
   padding: 1rem;
+}
+
+.todo-fetcher {
+  grid-column: 1 / -1;
+   display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 1rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.footer {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 0.75rem;
+  background: #0b5ed7;
+  color: #fff;
+  font-size: 0.9rem;
+  margin-top: auto;
 }
 
 .item {
   text-align: left;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
 }
 
 .App-logo {

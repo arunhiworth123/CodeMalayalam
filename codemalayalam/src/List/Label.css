@@ -1,0 +1,9 @@
+.list-label {
+  background: green;
+  color: white;
+  padding: 1px 3px;
+  margin: 1px;
+  border-radius: 2px;
+  font-size: 1rem;
+  display: inline-block;
+}
