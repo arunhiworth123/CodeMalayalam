@@ -18,14 +18,14 @@ const obj = [
     isActive: false
   },
   {
-    Name: "Arun",
+    Name: "Janvi",
     Image : "https://i.pravatar.cc/150?img=2",
     title: "Appointment for November",
     descr: "The patient have Bp problem",
     isActive: true  
   },
   {
-    Name : "Janvi",
+    Name : "Arun",
     Image : "https://i.pravatar.cc/150?img=3",
     title: "Appointment for December",
     descr: "Chrinic allergetic Problemr",
