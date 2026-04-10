@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import List from './List/List.js';
 import {TodoFetcher,Increment} from './TodoFetcher.js';
@@ -12,6 +12,32 @@ const defaultUser = {
   imageSize: 90,
   borderRadius: '20px'
 };
+
+const COUNTDOWN_DAYS = 60;
+
+function getReleaseDate() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  const storedDate = localStorage.getItem('releaseDate');
+  if (storedDate) {
+    return new Date(storedDate);
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const releaseDate = new Date(today);
+  releaseDate.setDate(releaseDate.getDate() + COUNTDOWN_DAYS);
+  localStorage.setItem('releaseDate', releaseDate.toISOString());
+  return releaseDate;
+}
+
+function getDaysLeft(releaseDate) {
+  const now = new Date();
+  const diffMs = releaseDate - now;
+  return diffMs > 0 ? Math.ceil(diffMs / (1000 * 60 * 60 * 24)) : 0;
+}
 
 
 const obj = [
@@ -53,6 +79,28 @@ const obj = [
 ];
 
 export default function App() {
+  const [daysLeft, setDaysLeft] = useState(() => {
+    const releaseDate = getReleaseDate();
+    return releaseDate ? getDaysLeft(releaseDate) : COUNTDOWN_DAYS;
+  });
+
+  useEffect(() => {
+    const releaseDate = getReleaseDate();
+    if (!releaseDate) {
+      return undefined;
+    }
+
+    const timer = setInterval(() => {
+      setDaysLeft(getDaysLeft(releaseDate));
+    }, 1000 * 60 * 60);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const releaseMessage = daysLeft > 0
+    ? `A new video arrives in ${daysLeft} day${daysLeft === 1 ? '' : 's'}`
+    : 'A new video is now available!';
+
   return (
 <div className="App">
     <div className="app-header">
@@ -63,6 +111,7 @@ export default function App() {
     <span>Logout </span>
     </div>
 <div className="app-body">
+    <div className="video-countdown">{releaseMessage}</div>
     <Increment/>
     <TodoFetcher />
       {
