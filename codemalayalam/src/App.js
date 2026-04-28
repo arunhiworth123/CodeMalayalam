@@ -34,9 +34,14 @@ function getReleaseDate() {
 }
 
 function getDaysLeft(releaseDate) {
-  const now = new Date();
-  const diffMs = releaseDate - now;
-  return diffMs > 0 ? Math.ceil(diffMs / (1000 * 60 * 60 * 24)) : 0;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const targetDate = new Date(releaseDate);
+  targetDate.setHours(0, 0, 0, 0);
+
+  const diffMs = targetDate - today;
+  return diffMs > 0 ? Math.round(diffMs / (1000 * 60 * 60 * 24)) : 0;
 }
 
 
