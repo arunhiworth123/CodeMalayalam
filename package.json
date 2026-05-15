@@ -36,5 +36,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-class-properties": "^7.28.6",
+    "@babel/plugin-transform-nullish-coalescing-operator": "^7.28.6",
+    "@babel/plugin-transform-optional-chaining": "^7.28.6"
   }
 }
