@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import List from './List/List.js';
 import {TodoFetcher,Increment} from './TodoFetcher.js';
@@ -44,6 +44,15 @@ function getDaysLeft(releaseDate) {
   return diffMs > 0 ? Math.round(diffMs / (1000 * 60 * 60 * 24)) : 0;
 }
 
+
+const navItems = ['Home', 'About us', 'Products', 'Settings', 'Logout'];
+const routeMap = {
+  home: 'Home',
+  'about-us': 'About us',
+  products: 'Products',
+  settings: 'Settings',
+  logout: 'Logout'
+};
 
 const obj = [
   {
@@ -368,27 +377,18 @@ export default function App() {
     ? `A new video arrives in ${daysLeft} day${daysLeft === 1 ? '' : 's'}`
     : 'A new video is now available!';
 
-  const navItems = ['Home', 'About us', 'Products', 'Settings', 'Logout'];
-  const routeMap = {
-    home: 'Home',
-    'about-us': 'About us',
-    products: 'Products',
-    settings: 'Settings',
-    logout: 'Logout'
-  };
-
   const routeForPage = (page) => {
     if (page === 'Home') return '/Home';
     return `/${page.replace(/\s+/g, '-').toLowerCase()}`;
   };
 
-  const getPageFromPath = () => {
+  const getPageFromPath = useCallback(() => {
     if (typeof window === 'undefined') return 'Home';
     const path = decodeURIComponent(window.location.pathname.replace(/^\/+/, ''));
     if (!path) return 'Home';
     const normalized = routeMap[path.toLowerCase()] || 'Home';
     return normalized;
-  };
+  }, []);
 
   const [activePage, setActivePage] = useState(getPageFromPath);
 
@@ -396,7 +396,7 @@ export default function App() {
     const updatePage = () => setActivePage(getPageFromPath());
     window.addEventListener('popstate', updatePage);
     return () => window.removeEventListener('popstate', updatePage);
-  }, []);
+  }, [getPageFromPath]);
 
   const navigateTo = (page) => {
     const path = routeForPage(page);
