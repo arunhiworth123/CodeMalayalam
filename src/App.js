@@ -7,6 +7,7 @@ import avatar2 from './assets/images/avatar2.png';
 import avatar3 from './assets/images/avatar3.png';
 import avatar4 from './assets/images/avatar4.png';
 import avatar5 from './assets/images/avatar5.png';
+import malayalamDoc from './assets/Docs/ആ നിമിഷം.docx';
 
 const defaultUser = {
   imageSize: 90,
@@ -15,33 +16,43 @@ const defaultUser = {
 
 const COUNTDOWN_DAYS = 60;
 
+// Use a fixed target release date (YYYY-MM-DD). Stored per-browser in localStorage
+// so each browser keeps its own counter. Using date-only UTC arithmetic avoids
+// timezone/DST differences that caused inconsistent displays.
+const DEFAULT_RELEASE_DATE = '2026-08-13';
+
 function getReleaseDate() {
-  if (typeof window === 'undefined') {
-    return null;
-  }
+  if (typeof window === 'undefined') return null;
 
-  const storedDate = localStorage.getItem('releaseDate');
-  if (storedDate) {
-    return new Date(storedDate);
-  }
+  const stored = localStorage.getItem('releaseDate');
+  if (stored) return stored; // stored as 'YYYY-MM-DD'
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const releaseDate = new Date(today);
-  releaseDate.setDate(releaseDate.getDate() + COUNTDOWN_DAYS);
-  localStorage.setItem('releaseDate', releaseDate.toISOString());
-  return releaseDate;
+  // Store the date-only string so different browsers/profiles keep their own value
+  localStorage.setItem('releaseDate', DEFAULT_RELEASE_DATE);
+  return DEFAULT_RELEASE_DATE;
 }
 
 function getDaysLeft(releaseDate) {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  // releaseDate may be a Date or a 'YYYY-MM-DD' string. Compute using UTC
+  // midnight boundaries and return a non-negative integer of whole days left.
+  const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
-  const targetDate = new Date(releaseDate);
-  targetDate.setHours(0, 0, 0, 0);
+  const now = new Date();
+  const todayUtc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
 
-  const diffMs = targetDate - today;
-  return diffMs > 0 ? Math.round(diffMs / (1000 * 60 * 60 * 24)) : 0;
+  let targetUtc;
+  if (typeof releaseDate === 'string') {
+    const parts = releaseDate.split('-').map(Number);
+    if (parts.length !== 3 || parts.some(Number.isNaN)) return 0;
+    const [y, m, d] = parts;
+    targetUtc = Date.UTC(y, m - 1, d);
+  } else {
+    const t = new Date(releaseDate);
+    targetUtc = Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate());
+  }
+
+  const diffDays = Math.ceil((targetUtc - todayUtc) / MS_PER_DAY);
+  return diffDays > 0 ? diffDays : 0;
 }
 
 
@@ -289,6 +300,63 @@ function LogoutPage({ onBack }) {
   );
 }
 
+function SecretPage({ onBack }) {
+  const [docHtml, setDocHtml] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    async function loadDoc() {
+      setLoading(true);
+      setError('');
+
+      if (!window.mammoth) {
+        setError('DOCX parser is not loaded.');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(malayalamDoc);
+        const arrayBuffer = await response.arrayBuffer();
+        const result = await window.mammoth.convertToHtml({ arrayBuffer });
+        setDocHtml(result.value || '');
+      } catch (err) {
+        setError('Failed to load document: ' + (err && err.message));
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadDoc();
+  }, []);
+
+  return (
+    <div className="about-page">
+      <button className="back-button" onClick={onBack}>
+        Back
+      </button>
+      <div className="about-hero">
+        <h1>Secret Page</h1>
+        <p>This secret page automatically shows the Malayalam Word document from the app assets.</p>
+      </div>
+
+      <div className="about-section">
+        <h2>Document Preview</h2>
+        {loading ? (
+          <p>Loading document…</p>
+        ) : error ? (
+          <div style={{ color: 'red' }}>{error}</div>
+        ) : docHtml ? (
+          <div className="doc-preview" dangerouslySetInnerHTML={{ __html: docHtml }} />
+        ) : (
+          <p>Document is empty or could not be parsed.</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function ProductsPage({ onBack }) {
   return (
     <div className="about-page">
@@ -386,7 +454,9 @@ export default function App() {
     if (typeof window === 'undefined') return 'Home';
     const path = decodeURIComponent(window.location.pathname.replace(/^\/+/, ''));
     if (!path) return 'Home';
-    const normalized = routeMap[path.toLowerCase()] || 'Home';
+    const lower = path.toLowerCase();
+    if (lower.startsWith('about-us/abcd/mysecret')) return 'MySecret';
+    const normalized = routeMap[lower] || 'Home';
     return normalized;
   }, []);
 
@@ -452,6 +522,8 @@ export default function App() {
       </div>
     ) : activePage === 'About us' ? (
       <AboutUsPage onBack={() => navigateTo('Home')} />
+    ) : activePage === 'MySecret' ? (
+      <SecretPage onBack={() => navigateTo('Home')} />
     ) : activePage === 'Products' ? (
       <ProductsPage onBack={() => navigateTo('Home')} />
     ) : activePage === 'Settings' ? (
