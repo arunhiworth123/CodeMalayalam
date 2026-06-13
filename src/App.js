@@ -16,19 +16,11 @@ const defaultUser = {
 
 const COUNTDOWN_DAYS = 60;
 
-// Use a fixed target release date (YYYY-MM-DD). Stored per-browser in localStorage
-// so each browser keeps its own counter. Using date-only UTC arithmetic avoids
-// timezone/DST differences that caused inconsistent displays.
+// Fixed target release date for the video.
 const DEFAULT_RELEASE_DATE = '2026-08-13';
 
 function getReleaseDate() {
   if (typeof window === 'undefined') return null;
-
-  const stored = localStorage.getItem('releaseDate');
-  if (stored) return stored; // stored as 'YYYY-MM-DD'
-
-  // Store the date-only string so different browsers/profiles keep their own value
-  localStorage.setItem('releaseDate', DEFAULT_RELEASE_DATE);
   return DEFAULT_RELEASE_DATE;
 }
 
@@ -441,12 +433,14 @@ export default function App() {
     return () => clearInterval(timer);
   }, []);
 
-  const releaseMessage = daysLeft > 0
-    ? `A new video arrives in ${daysLeft} day${daysLeft === 1 ? '' : 's'}`
-    : 'A new video is now available!';
+  const videoAvailable = daysLeft === 0;
+  const releaseMessage = videoAvailable
+    ? 'A new video is now available!'
+    : `A new video arrives in ${daysLeft} day${daysLeft === 1 ? '' : 's'}`;
 
   const routeForPage = (page) => {
     if (page === 'Home') return '/Home';
+    if (page === 'MySecret') return '/about-us/abcd/MySecret';
     return `/${page.replace(/\s+/g, '-').toLowerCase()}`;
   };
 
@@ -491,7 +485,16 @@ export default function App() {
     <div className="page-caption">{activePage}</div>
     {activePage === 'Home' ? (
       <div className="app-body">
-        <div className="video-countdown">{releaseMessage}</div>
+        <div className="video-countdown">
+          {releaseMessage}
+          {videoAvailable && (
+            <div style={{ marginTop: '1rem' }}>
+              <button className="secret-link-button" onClick={() => navigateTo('MySecret')}>
+                View secret video page
+              </button>
+            </div>
+          )}
+        </div>
         <Increment/>
         <TodoFetcher />
         {
