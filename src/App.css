@@ -196,6 +196,49 @@
   line-height: 1.75;
 }
 
+.doc-preview {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  padding: 2rem;
+  max-width: 960px;
+  margin: 1.5rem 0;
+  line-height: 1.75;
+  color: #111827;
+}
+
+.doc-preview p,
+.doc-preview ul,
+.doc-preview ol,
+.doc-preview h1,
+.doc-preview h2,
+.doc-preview h3,
+.doc-preview h4,
+.doc-preview h5,
+.doc-preview h6,
+.doc-preview table {
+  margin: 0 0 1rem;
+}
+
+.doc-preview h1,
+.doc-preview h2,
+.doc-preview h3,
+.doc-preview h4,
+.doc-preview h5,
+.doc-preview h6 {
+  color: #0b5ed7;
+}
+
+.doc-preview img {
+  max-width: 100%;
+  height: auto;
+}
+
+.doc-preview > * {
+  page-break-inside: avoid;
+}
+
 .logout-confirm {
   display: inline-block;
   background: #d11a2a;
