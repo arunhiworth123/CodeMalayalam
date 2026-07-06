@@ -7,7 +7,6 @@ import avatar2 from './assets/images/avatar2.png';
 import avatar3 from './assets/images/avatar3.png';
 import avatar4 from './assets/images/avatar4.png';
 import avatar5 from './assets/images/avatar5.png';
-import malayalamDoc from './assets/Docs/ആ നിമിഷം.docx';
 
 const defaultUser = {
   imageSize: 90,
@@ -293,36 +292,6 @@ function LogoutPage({ onBack }) {
 }
 
 function SecretPage({ onBack }) {
-  const [docHtml, setDocHtml] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    async function loadDoc() {
-      setLoading(true);
-      setError('');
-
-      if (!window.mammoth) {
-        setError('DOCX parser is not loaded.');
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const response = await fetch(malayalamDoc);
-        const arrayBuffer = await response.arrayBuffer();
-        const result = await window.mammoth.convertToHtml({ arrayBuffer });
-        setDocHtml(result.value || '');
-      } catch (err) {
-        setError('Failed to load document: ' + (err && err.message));
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadDoc();
-  }, []);
-
   return (
     <div className="about-page">
       <button className="back-button" onClick={onBack}>
@@ -330,20 +299,7 @@ function SecretPage({ onBack }) {
       </button>
       <div className="about-hero">
         <h1>Secret Page</h1>
-        <p>This secret page automatically shows the Malayalam Word document from the app assets.</p>
-      </div>
-
-      <div className="about-section">
-        <h2>Document Preview</h2>
-        {loading ? (
-          <p>Loading document…</p>
-        ) : error ? (
-          <div style={{ color: 'red' }}>{error}</div>
-        ) : docHtml ? (
-          <div className="doc-preview" dangerouslySetInnerHTML={{ __html: docHtml }} />
-        ) : (
-          <p>Document is empty or could not be parsed.</p>
-        )}
+        <p>This secret page no longer displays the document preview content.</p>
       </div>
     </div>
   );
